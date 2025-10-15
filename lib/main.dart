@@ -26,24 +26,41 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  bool _showLogo = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Muestra el logo durante 2 segundos
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        _showLogo = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 130, 171, 233),
       body: Center(
-        child: Lottie.asset(
-          'assets/Loading_splash.json',
-          width: 250,
-          height: 250,
-          onLoaded: (composition) {
-            // Cuando termina la animación, pasa a la pantalla principal
-            Future.delayed(composition.duration, () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const WeatherForecastPage()),
-              );
-            });
-          },
-        ),
+        child: _showLogo
+            ? Image.asset('assets/fortnitellama_logo.png', width: 200)
+            : Lottie.asset(
+                'assets/Loading_splash.json',
+                width: 250,
+                height: 250,
+                onLoaded: (composition) {
+                  // Cuando termina la animación Lottie, pasa a la página principal
+                  Future.delayed(composition.duration, () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (_) => const WeatherForecastPage(),
+                      ),
+                    );
+                  });
+                },
+              ),
       ),
     );
   }
