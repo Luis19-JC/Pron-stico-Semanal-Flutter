@@ -1,6 +1,53 @@
-// lib/main.dart
-
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+
+void main() {
+  runApp(const SplashApp());
+}
+
+class SplashApp extends StatelessWidget {
+  const SplashApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Weather Forecast',
+      home: SplashScreen(),
+    );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 130, 171, 233),
+      body: Center(
+        child: Lottie.asset(
+          'assets/Loading_splash.json',
+          width: 250,
+          height: 250,
+          onLoaded: (composition) {
+            // Cuando termina la animación, pasa a la pantalla principal
+            Future.delayed(composition.duration, () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const WeatherForecastPage()),
+              );
+            });
+          },
+        ),
+      ),
+    );
+  }
+}
 
 // =======================================================
 // ESTRUCTURA DE DATOS (Simulación de la API)
@@ -15,7 +62,6 @@ class DailyForecast {
   DailyForecast(this.day, this.temp, this.condition, this.imageId);
 }
 
-// Función que simula obtener los datos de 7 días
 List<DailyForecast> getForecasts() {
   return [
     DailyForecast('Lunes', 22, 'Soleado', 'assets/sun.jpg'),
@@ -28,14 +74,13 @@ List<DailyForecast> getForecasts() {
   ];
 }
 
-// Función para obtener un pronóstico específico por índice
 DailyForecast getDailyForecastByIndex(int index) {
   final data = getForecasts();
   return data[index % data.length];
 }
 
 // =======================================================
-// WIDGET DE LA TARJETA DE PRONÓSTICO (ForecastCard)
+// WIDGET DE LA TARJETA DE PRONÓSTICO
 // =======================================================
 
 class ForecastCard extends StatelessWidget {
@@ -50,25 +95,28 @@ class ForecastCard extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Row(
           children: <Widget>[
-            // Día (Izquierda)
             SizedBox(
               width: 100,
               child: Text(
                 forecast.day,
-                style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            // Condición (Centro) - Ocupa el espacio restante
             Expanded(
               child: Text(
                 forecast.condition,
                 style: const TextStyle(fontSize: 14.0),
               ),
             ),
-            // Temperatura (Derecha)
             Text(
               '${forecast.temp}°C',
-              style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+              style: const TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),
@@ -78,25 +126,8 @@ class ForecastCard extends StatelessWidget {
 }
 
 // =======================================================
-// APLICACIÓN PRINCIPAL
+// PANTALLA PRINCIPAL: Pronóstico del Clima
 // =======================================================
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Flutter Slivers Demo',
-      home: WeatherForecastPage(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
 
 class WeatherForecastPage extends StatelessWidget {
   const WeatherForecastPage({super.key});
@@ -104,54 +135,38 @@ class WeatherForecastPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Usamos CustomScrollView para contener los slivers
       body: CustomScrollView(
         slivers: <Widget>[
-          // 1. SLIVER APP BAR (El encabezado dinámico)
           SliverAppBar(
-            // Comportamiento del AppBar:
-            pinned: true,           // Mantiene la barra visible al colapsar
-            floating: true,         // Permite que la barra aparezca/desaparezca rápidamente
-            expandedHeight: 250.0,  // Altura máxima de expansión
-            stretch: true,          // Habilita el estiramiento (pull-to-refresh)
-            
-            // Función que se activa al estirar la barra lo suficiente
+            pinned: true,
+            floating: true,
+            expandedHeight: 250.0,
+            stretch: true,
             onStretchTrigger: () async {
               print('### Recargando datos de pronóstico... ###');
-              await Future.delayed(const Duration(milliseconds: 1500)); 
+              await Future.delayed(const Duration(milliseconds: 1500));
               print('### ¡Recarga completada! ###');
             },
-            
-            // Título de la barra cuando está colapsada
-            title: const Text('Pronóstico Semanal'), 
-            
-            // Espacio flexible que se mueve y colapsa
+            title: const Text('Pronóstico Semanal'),
             flexibleSpace: FlexibleSpaceBar(
               title: const Text(
                 'HORIZONS WEATHER',
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
               centerTitle: true,
-
-              // Fondo con imagen y degradado para mejor contraste del título
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Imagen de fondo (Placeholder de una URL pública)
                   Image.network(
-                    'https://picsum.photos/800/250', 
+                    'https://picsum.photos/800/250',
                     fit: BoxFit.cover,
                   ),
-                  // Degradado para mejorar la visibilidad del título
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.bottomCenter,
                         end: Alignment.center,
-                        colors: <Color>[
-                          Color(0x60000000), // Negro semitransparente
-                          Color(0x00000000), // Totalmente transparente
-                        ],
+                        colors: <Color>[Color(0x60000000), Color(0x00000000)],
                       ),
                     ),
                   ),
@@ -159,17 +174,14 @@ class WeatherForecastPage extends StatelessWidget {
               ),
             ),
           ),
-          
-          // 2. SLIVER LIST (La lista con carga perezosa)
           SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                // Se construye solo lo necesario
-                final forecast = getDailyForecastByIndex(index);
-                return ForecastCard(forecast: forecast);
-              },
-              childCount: 7, // Número total de elementos en la lista
-            ),
+            delegate: SliverChildBuilderDelegate((
+              BuildContext context,
+              int index,
+            ) {
+              final forecast = getDailyForecastByIndex(index);
+              return ForecastCard(forecast: forecast);
+            }, childCount: 7),
           ),
         ],
       ),
