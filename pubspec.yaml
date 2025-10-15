@@ -24,7 +24,7 @@ flutter:
 
   assets:
     - assets/fortnitellama_logo.png
-    - assets/Loading_splash.json
+    - assets/Globe_splash.json
 
 icons_launcher:
   image_path: "assets/fortnitellama_logo.png"

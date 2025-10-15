@@ -47,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: _showLogo
             ? Image.asset('assets/fortnitellama_logo.png', width: 200)
             : Lottie.asset(
-                'assets/Loading_splash.json',
+                'assets/Globe_splash.json',
                 width: 250,
                 height: 250,
                 onLoaded: (composition) {
